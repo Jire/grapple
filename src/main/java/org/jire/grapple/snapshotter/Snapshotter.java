@@ -16,18 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jire.grapple;
+package org.jire.grapple.snapshotter;
 
-import com.sun.jna.Pointer;
+import org.jire.grapple.Source;
 
-public interface Source extends Readable {
+import java.util.concurrent.ThreadFactory;
+
+public interface Snapshotter extends Source {
 	
-	long getSize();
+	Source getSource();
 	
-	long getBase();
+	void takeSnapshot();
 	
-	boolean read(Pointer address, Pointer data, int bytesToRead);
+	void autoTakeSnapshot(ThreadFactory threadFactory, long delayMillis);
 	
-	boolean read(long address, Pointer data, int bytesToRead);
+	void autoTakeSnapshot(long delayMillis);
+	
+	void autoTakeSnapshot();
+	
+	void doAfterSnapshot();
 	
 }

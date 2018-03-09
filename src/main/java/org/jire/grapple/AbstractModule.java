@@ -25,12 +25,11 @@ public abstract class AbstractModule<PROCESS_TYPE extends Process>
 	
 	private final PROCESS_TYPE process;
 	private final String name;
-	private final long base;
 	
-	public AbstractModule(PROCESS_TYPE process, String name, long base) {
+	public AbstractModule(long size, long base, PROCESS_TYPE process, String name) {
+		super(size, base);
 		this.process = process;
 		this.name = name;
-		this.base = base;
 	}
 	
 	@Override
@@ -44,20 +43,14 @@ public abstract class AbstractModule<PROCESS_TYPE extends Process>
 	}
 	
 	@Override
-	public long getBase() {
-		return base;
-	}
-	
-	@Override
 	public boolean read(Pointer address, Pointer data, int bytesToRead) {
-		return getProcess().read(
-				LongToPointer.modifyPeer(address, getBase() + Pointer.nativeValue(address)),
-				data, bytesToRead);
+		Pointer.nativeValue(address, getBase() + Pointer.nativeValue(address)); // set the pointer to the modified address
+		return getProcess().read(address, data, bytesToRead); // then do the read via process
 	}
 	
 	@Override
 	public boolean read(long address, Pointer data, int bytesToRead) {
-		return super.read(process.getBase() + getBase() + address, data, bytesToRead);
+		return getProcess().read(getBase() + address, data, bytesToRead);
 	}
 	
 }

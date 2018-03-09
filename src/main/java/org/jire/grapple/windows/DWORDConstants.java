@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jire.grapple;
+package org.jire.grapple.windows;
 
 import com.sun.jna.platform.win32.WinDef;
 

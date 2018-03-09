@@ -18,16 +18,38 @@
 
 package org.jire.grapple;
 
-import com.sun.jna.Pointer;
-
-public interface Source extends Readable {
+public interface Readable {
 	
-	long getSize();
+	byte readByte(long offset);
 	
-	long getBase();
+	byte readByte();
 	
-	boolean read(Pointer address, Pointer data, int bytesToRead);
+	short readShort(long offset);
 	
-	boolean read(long address, Pointer data, int bytesToRead);
+	short readShort();
+	
+	int readInt(long offset);
+	
+	int readInt();
+	
+	long readLong(long offset);
+	
+	long readLong();
+	
+	float readFloat(long offset);
+	
+	float readFloat();
+	
+	double readDouble(long offset);
+	
+	double readDouble();
+	
+	char readChar(long offset);
+	
+	char readChar();
+	
+	boolean readBoolean(long offset);
+	
+	boolean readBoolean();
 	
 }

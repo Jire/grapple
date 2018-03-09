@@ -21,27 +21,16 @@ package org.jire.grapple.windows;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
-import org.jire.grapple.AbstractModule;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.StdCallLibrary;
 
-public class WindowsModule extends AbstractModule<WindowsProcess> {
+public interface Psapi extends StdCallLibrary {
 	
-	private final WinDef.HMODULE hModule;
+	boolean EnumProcessModulesEx(WinNT.HANDLE hProcess, WinDef.HMODULE[] lphModule, int cb,
+	                             IntByReference lpcbNeeded, int dwFilterFlag);
 	
-	public WindowsModule(long size, long base, WindowsProcess process, String name, WinDef.HMODULE hModule) {
-		super(size, base, process, name);
-		this.hModule = hModule;
-	}
+	int GetModuleBaseNameA(WinNT.HANDLE hProcess, WinDef.HMODULE hModule, byte[] lpBaseName, int nSize);
 	
-	public WinDef.HMODULE getHModule() {
-		return hModule;
-	}
-	
-	public static String getModuleName(WinNT.HANDLE processHandle, WinDef.HMODULE module) {
-		final byte[] name = new byte[256]; // support 256 ASCII characters for the name as of latest Windows 10
-		if (Psapi.INSTANCE.GetModuleBaseNameA(processHandle, module, name, name.length) > 0) {
-			return Native.toString(name);
-		}
-		return null;
-	}
+	Psapi INSTANCE = Native.loadLibrary("Psapi", Psapi.class);
 	
 }

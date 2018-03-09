@@ -25,6 +25,14 @@ public abstract class AbstractProcess extends AbstractSource implements Process 
 	
 	protected final Map<String, Module> modules = new HashMap<String, Module>();
 	
+	public AbstractProcess(long size, long base) {
+		super(size, base);
+	}
+	
+	public AbstractProcess(long size) {
+		this(size, DEFAULT_BASE);
+	}
+	
 	@Override
 	public Map<String, Module> getModules() {
 		return new HashMap<String, Module>(modules); // defensive clone

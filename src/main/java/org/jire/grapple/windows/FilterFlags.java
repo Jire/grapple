@@ -18,30 +18,15 @@
 
 package org.jire.grapple.windows;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinNT;
-import org.jire.grapple.AbstractModule;
-
-public class WindowsModule extends AbstractModule<WindowsProcess> {
+public final class FilterFlags {
 	
-	private final WinDef.HMODULE hModule;
+	public static final int LIST_MODULES_DEFAULT = 0x0;
+	public static final int LIST_MODULES_32BIT = 0x01;
+	public static final int LIST_MODULES_64BIT = 0x02;
+	public static final int LIST_MODULES_ALL = 0x03;
 	
-	public WindowsModule(long size, long base, WindowsProcess process, String name, WinDef.HMODULE hModule) {
-		super(size, base, process, name);
-		this.hModule = hModule;
-	}
-	
-	public WinDef.HMODULE getHModule() {
-		return hModule;
-	}
-	
-	public static String getModuleName(WinNT.HANDLE processHandle, WinDef.HMODULE module) {
-		final byte[] name = new byte[256]; // support 256 ASCII characters for the name as of latest Windows 10
-		if (Psapi.INSTANCE.GetModuleBaseNameA(processHandle, module, name, name.length) > 0) {
-			return Native.toString(name);
-		}
-		return null;
+	private FilterFlags() {
+		throw new UnsupportedOperationException();
 	}
 	
 }

@@ -16,18 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jire.grapple;
+package org.jire.grapple.memory;
 
-import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
 
-public interface Source extends Readable {
+final class NonThreadSafe implements MemoryCache {
 	
-	long getSize();
+	// reason we index by size is because it's far faster than a map-lookup!
 	
-	long getBase();
+	private final Memory[] MEMORY_INDEXED_BY_SIZE = new Memory[8 + 1]; // support up to size of long (8 bytes)
 	
-	boolean read(Pointer address, Pointer data, int bytesToRead);
+	NonThreadSafe() {
+		for (int i = 2; i <= 8; i += 2) {
+			MEMORY_INDEXED_BY_SIZE[i] = new Memory(i);
+		}
+	}
 	
-	boolean read(long address, Pointer data, int bytesToRead);
+	@Override
+	public boolean isSupportedSize(int size) {
+		return size <= 8 && size % 2 == 0;
+	}
+	
+	@Override
+	public Memory forSize(int size) {
+		final Memory memory = MEMORY_INDEXED_BY_SIZE[size];
+		memory.clear(size);
+		return memory;
+	}
 	
 }

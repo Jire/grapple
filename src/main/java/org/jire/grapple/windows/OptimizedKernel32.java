@@ -24,8 +24,11 @@ import com.sun.jna.Pointer;
 
 public final class OptimizedKernel32 {
 	
-	public static native long ReadProcessMemory(Pointer hProcess, Pointer lpBaseAddress, Pointer lpBuffer,
-	                                            int nSize, Pointer lpNumberOfBytesRead);
+	public static native long ReadProcessMemory(final Pointer hProcess,
+	                                            final Pointer lpBaseAddress,
+	                                            final Pointer lpBuffer,
+	                                            final int nSize,
+	                                            final Pointer lpNumberOfBytesRead);
 	
 	static {
 		Native.register(NativeLibrary.getInstance("Kernel32"));

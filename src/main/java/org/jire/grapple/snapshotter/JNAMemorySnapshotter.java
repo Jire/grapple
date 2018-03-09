@@ -16,18 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jire.grapple;
+package org.jire.grapple.snapshotter;
 
-import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
+import org.jire.grapple.Source;
 
-public interface Source extends Readable {
+public abstract class JNAMemorySnapshotter extends AbstractSnapshotter {
 	
-	long getSize();
+	private final Memory memory;
 	
-	long getBase();
+	public JNAMemorySnapshotter(Source source) {
+		super(source);
+		
+		this.memory = new Memory(source.getSize());
+	}
 	
-	boolean read(Pointer address, Pointer data, int bytesToRead);
+	public Memory getMemory() {
+		return memory;
+	}
 	
-	boolean read(long address, Pointer data, int bytesToRead);
+	@Override
+	public void takeSnapshot() {
+		if (getSource().read(0L, memory, (int) getSource().getSize() /* supports 32-bit process size only */)) {
+			doAfterSnapshot();
+		} else {
+			System.out.println("failed");
+		}
+	}
 	
 }

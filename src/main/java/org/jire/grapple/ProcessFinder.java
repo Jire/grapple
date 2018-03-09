@@ -22,6 +22,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinNT;
+import org.jire.grapple.windows.DWORDConstants;
 import org.jire.grapple.windows.WindowsProcess;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public final class ProcessFinder {
 	public static Process findProcessByID(int processID, int accessFlags) {
 		final WinNT.HANDLE handle = Kernel32.INSTANCE.OpenProcess(accessFlags, true, processID);
 		if (handle != null) {
-			return new WindowsProcess(handle);
+			return new WindowsProcess(0L/*XXX*/, handle);
 		}
 		return null;
 	}

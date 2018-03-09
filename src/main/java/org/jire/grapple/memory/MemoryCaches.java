@@ -16,18 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jire.grapple;
+package org.jire.grapple.memory;
 
-import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
+import org.jire.grapple.Source;
 
-public interface Source extends Readable {
+public final class MemoryCaches {
 	
-	long getSize();
+	public static final MemoryCache NON_THREAD_SAFE = new NonThreadSafe();
 	
-	long getBase();
+	public static Memory readCachedIfPossible(MemoryCache memoryCache, Source source, long address, int bytesToRead) {
+		final boolean sizeSupported = memoryCache.isSupportedSize(bytesToRead);
+		final Memory memory = sizeSupported ? memoryCache.forSize(bytesToRead) : new Memory(bytesToRead);
+		source.read(address, memory, bytesToRead);
+		return memory;
+	}
 	
-	boolean read(Pointer address, Pointer data, int bytesToRead);
-	
-	boolean read(long address, Pointer data, int bytesToRead);
+	public static Memory readCachedIfPossible(Source source, long address, int bytesToRead) {
+		return readCachedIfPossible(NON_THREAD_SAFE, source, address, bytesToRead);
+	}
 	
 }

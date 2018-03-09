@@ -20,7 +20,6 @@ package org.jire.grapple.windows;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.Psapi;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
@@ -32,7 +31,8 @@ public class WindowsProcess extends AbstractProcess {
 	
 	private final WinNT.HANDLE handle;
 	
-	public WindowsProcess(WinNT.HANDLE handle) {
+	public WindowsProcess(long size, WinNT.HANDLE handle) {
+		super(size);
 		this.handle = handle;
 	}
 	
@@ -46,17 +46,20 @@ public class WindowsProcess extends AbstractProcess {
 		
 		final WinDef.HMODULE[] modules = new WinDef.HMODULE[4096];
 		final IntByReference needed = new IntByReference();
-		if (Psapi.INSTANCE.EnumProcessModules(handle, modules, modules.length, needed)) {
+		if (Psapi.INSTANCE.EnumProcessModulesEx(handle, modules, modules.length, needed, FilterFlags.LIST_MODULES_ALL)) {
 			for (int i = 0; i < needed.getValue() / Native.getNativeSize(WinDef.HMODULE.class); i++) {
 				final WinDef.HMODULE hModule = modules[i];
 				if (hModule == null) continue;
 				
-				final Psapi.MODULEINFO moduleInfo = new Psapi.MODULEINFO();
-				if (Psapi.INSTANCE.GetModuleInformation(handle, hModule, moduleInfo, moduleInfo.size())) {
-					final String name = WindowsModule.getModuleName(handle, hModule);
+				final com.sun.jna.platform.win32.Psapi.MODULEINFO moduleInfo
+						= new com.sun.jna.platform.win32.Psapi.MODULEINFO();
+				if (com.sun.jna.platform.win32.Psapi.INSTANCE
+						.GetModuleInformation(handle, hModule, moduleInfo, moduleInfo.size())) {
+					final int size = moduleInfo.SizeOfImage;
 					final long base = Pointer.nativeValue(hModule.getPointer());
+					final String name = WindowsModule.getModuleName(handle, hModule);
 					
-					final WindowsModule module = new WindowsModule(this, name, base, hModule);
+					final WindowsModule module = new WindowsModule(size, base, this, name, hModule);
 					WindowsProcess.this.modules.put(name, module);
 				}
 			}
