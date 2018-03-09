@@ -34,6 +34,6 @@ public interface Snapshotter extends Source {
 	
 	void autoTakeSnapshot();
 	
-	void doAfterSnapshot();
+	void afterSnapshot();
 	
 }

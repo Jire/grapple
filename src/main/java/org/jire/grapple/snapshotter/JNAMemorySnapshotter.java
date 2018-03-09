@@ -38,7 +38,7 @@ public abstract class JNAMemorySnapshotter extends AbstractSnapshotter {
 	@Override
 	public void takeSnapshot() {
 		if (getSource().read(0L, memory, (int) getSource().getSize() /* supports 32-bit process size only */)) {
-			doAfterSnapshot();
+			afterSnapshot();
 		} else {
 			System.out.println("failed");
 		}
