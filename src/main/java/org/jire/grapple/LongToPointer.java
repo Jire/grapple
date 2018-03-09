@@ -22,8 +22,8 @@ import com.sun.jna.Pointer;
 
 public final class LongToPointer {
 	
-	public static Pointer get(Pointer pointer, long peer) {
-		Pointer.nativeValue(pointer, peer); // change the peer of the pointer
+	public static Pointer modifyPeer(Pointer pointer, long newPeer) {
+		Pointer.nativeValue(pointer, newPeer);
 		return pointer;
 	}
 	
@@ -38,7 +38,11 @@ public final class LongToPointer {
 				};
 		
 		public static Pointer get(long peer) {
-			return LongToPointer.get(ThreadSafe.pointer.get(), peer);
+			return LongToPointer.modifyPeer(ThreadSafe.pointer.get(), peer);
+		}
+		
+		private ThreadSafe() {
+			throw new UnsupportedOperationException();
 		}
 		
 	}
@@ -48,9 +52,17 @@ public final class LongToPointer {
 		private static final Pointer pointer = Pointer.createConstant(0L);
 		
 		public static Pointer get(long peer) {
-			return LongToPointer.get(pointer, peer);
+			return LongToPointer.modifyPeer(pointer, peer);
 		}
 		
+		private NonThreadSafe() {
+			throw new UnsupportedOperationException();
+		}
+		
+	}
+	
+	private LongToPointer() {
+		throw new UnsupportedOperationException();
 	}
 	
 }

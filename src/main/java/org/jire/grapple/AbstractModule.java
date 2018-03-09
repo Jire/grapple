@@ -20,28 +20,44 @@ package org.jire.grapple;
 
 import com.sun.jna.Pointer;
 
-public abstract class AbstractModule<PROCESS_TYPE extends Process> implements Module<PROCESS_TYPE> {
+public abstract class AbstractModule<PROCESS_TYPE extends Process>
+		extends AbstractSource implements Module<PROCESS_TYPE> {
 	
 	private final PROCESS_TYPE process;
+	private final String name;
+	private final long base;
 	
-	public AbstractModule(PROCESS_TYPE process) {
+	public AbstractModule(PROCESS_TYPE process, String name, long base) {
 		this.process = process;
+		this.name = name;
+		this.base = base;
 	}
 	
+	@Override
 	public PROCESS_TYPE getProcess() {
 		return process;
 	}
 	
 	@Override
+	public String getName() {
+		return name;
+	}
+	
+	@Override
+	public long getBase() {
+		return base;
+	}
+	
+	@Override
 	public boolean read(Pointer address, Pointer data, int bytesToRead) {
-		return read(LongToPointer.get(address,
-				Pointer.nativeValue(address) + process.getBase() + getBase()),
+		return getProcess().read(
+				LongToPointer.modifyPeer(address, getBase() + Pointer.nativeValue(address)),
 				data, bytesToRead);
 	}
 	
 	@Override
 	public boolean read(long address, Pointer data, int bytesToRead) {
-		return read(address + process.getBase() + getBase(), data, bytesToRead);
+		return super.read(process.getBase() + getBase() + address, data, bytesToRead);
 	}
 	
 }

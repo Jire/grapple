@@ -21,31 +21,25 @@ package org.jire.grapple.windows;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Psapi;
 import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinNT;
 import org.jire.grapple.AbstractModule;
 
 public class WindowsModule extends AbstractModule<WindowsProcess> {
 	
 	private final WinDef.HMODULE hModule;
-	private final long base;
 	
-	public WindowsModule(WindowsProcess process, WinDef.HMODULE hModule, long base) {
-		super(process);
+	public WindowsModule(WindowsProcess process, String name, long base, WinDef.HMODULE hModule) {
+		super(process, name, base);
 		this.hModule = hModule;
-		this.base = base;
 	}
 	
 	public WinDef.HMODULE getHModule() {
 		return hModule;
 	}
 	
-	@Override
-	public long getBase() {
-		return base;
-	}
-	
-	public static String getModuleName(WindowsModule module) {
+	public static String getModuleName(WinNT.HANDLE processHandle, WinDef.HMODULE module) {
 		final byte[] name = new byte[256]; // support 256 ASCII characters for the name as of latest Windows 10
-		if (Psapi.INSTANCE.GetModuleFileNameExA(module.getProcess().getHandle(), module.hModule, name, name.length) > 0) {
+		if (Psapi.INSTANCE.GetModuleFileNameExA(processHandle, module, name, name.length) > 0) {
 			return Native.toString(name);
 		}
 		return null;

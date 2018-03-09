@@ -22,4 +22,6 @@ public interface Module<PROCESS_TYPE extends Process> extends Source {
 	
 	PROCESS_TYPE getProcess();
 	
+	String getName();
+	
 }

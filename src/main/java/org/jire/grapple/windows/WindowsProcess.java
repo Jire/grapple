@@ -53,10 +53,11 @@ public class WindowsProcess extends AbstractProcess {
 				
 				final Psapi.MODULEINFO moduleInfo = new Psapi.MODULEINFO();
 				if (Psapi.INSTANCE.GetModuleInformation(handle, hModule, moduleInfo, moduleInfo.size())) {
+					final String name = WindowsModule.getModuleName(handle, hModule);
 					final long base = Pointer.nativeValue(hModule.getPointer());
-					final WindowsModule module = new WindowsModule(this, hModule, base);
 					
-					WindowsProcess.this.modules.put(WindowsModule.getModuleName(module), module);
+					final WindowsModule module = new WindowsModule(this, name, base, hModule);
+					WindowsProcess.this.modules.put(name, module);
 				}
 			}
 		}

@@ -31,4 +31,7 @@ public final class OptimizedKernel32 {
 		Native.register(NativeLibrary.getInstance("Kernel32"));
 	}
 	
+	private OptimizedKernel32() {
+	}
+	
 }

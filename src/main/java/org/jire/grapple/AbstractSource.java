@@ -29,7 +29,7 @@ public abstract class AbstractSource implements Source {
 	
 	@Override
 	public boolean read(long address, Pointer data, int bytesToRead) {
-		return read(LongToPointer.NonThreadSafe.get(address), data, bytesToRead);
+		return read(LongToPointer.NonThreadSafe.get(address) /* NEED A FLIP FOR THIS */, data, bytesToRead);
 	}
 	
 }

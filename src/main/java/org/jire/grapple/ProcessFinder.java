@@ -24,31 +24,43 @@ import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinNT;
 import org.jire.grapple.windows.WindowsProcess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ProcessFinder {
 	
 	// TODO support other OS
 	
 	public static Process findProcessByID(int processID, int accessFlags) {
 		final WinNT.HANDLE handle = Kernel32.INSTANCE.OpenProcess(accessFlags, true, processID);
-		return new WindowsProcess(handle);
+		if (handle != null) {
+			return new WindowsProcess(handle);
+		}
+		return null;
 	}
 	
-	public static Process findProcessByName(String name, int accessFlags) {
+	public static List<Process> findProcessesByName(String name, int accessFlags) {
+		final List<Process> processes = new ArrayList<Process>();
+		
 		final WinNT.HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(
 				Tlhelp32.TH32CS_SNAPALL, DWORDConstants.ZERO);
 		final Tlhelp32.PROCESSENTRY32.ByReference entry = new Tlhelp32.PROCESSENTRY32.ByReference();
 		try {
 			while (Kernel32.INSTANCE.Process32Next(snapshot, entry)) {
 				final String fileName = Native.toString(entry.szExeFile);
-				if (name.equals(fileName)) return findProcessByID(entry.th32ProcessID.intValue(), accessFlags);
+				if (name.equals(fileName)) {
+					final Process processByID = findProcessByID(entry.th32ProcessID.intValue(), accessFlags);
+					if (processByID != null) processes.add(processByID);
+				}
 			}
 		} finally {
 			Kernel32.INSTANCE.CloseHandle(snapshot);
 		}
-		return null;
+		
+		return processes;
 	}
 	
-	public static Process findProcessByTitle(String title, int accessFlags) {
+	public static List<Process> findProcessesByTitle(String title, int accessFlags) {
 		throw new UnsupportedOperationException("TODO");//XXX
 	}
 	
