@@ -18,28 +18,8 @@
 
 package org.jire.grapple.snapshotter;
 
-import com.sun.jna.Memory;
-import org.jire.grapple.Source;
-
-public abstract class JNAMemorySnapshotter extends AbstractSnapshotter {
+public interface SnapshotListener {
 	
-	private final Memory memory;
-	
-	public JNAMemorySnapshotter(Source source) {
-		super(source);
-		
-		this.memory = new Memory(source.getSize());
-	}
-	
-	public Memory getMemory() {
-		return memory;
-	}
-	
-	@Override
-	public void takeSnapshot() {
-		if (getSource().read(0L, memory, (int) getSource().getSize() /* supports 32-bit process size only */)) {
-			afterSnapshot();
-		}
-	}
+	void onSnapshot(Snapshotter ss);
 	
 }

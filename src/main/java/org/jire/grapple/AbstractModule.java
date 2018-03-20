@@ -19,6 +19,8 @@
 package org.jire.grapple;
 
 import com.sun.jna.Pointer;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
 
 public abstract class AbstractModule<PROCESS_TYPE extends Process>
 		extends AbstractSource implements Module<PROCESS_TYPE> {
@@ -26,8 +28,9 @@ public abstract class AbstractModule<PROCESS_TYPE extends Process>
 	private final PROCESS_TYPE process;
 	private final String name;
 	
-	public AbstractModule(long size, long base, PROCESS_TYPE process, String name) {
-		super(size, base);
+	public AbstractModule(MemoryCache memoryCache, PointerCache pointerCache,
+	                      long size, long base, PROCESS_TYPE process, String name) {
+		super(memoryCache, pointerCache, size, base);
 		this.process = process;
 		this.name = name;
 	}

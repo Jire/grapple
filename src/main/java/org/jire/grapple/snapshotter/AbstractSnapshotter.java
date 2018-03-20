@@ -21,6 +21,8 @@ package org.jire.grapple.snapshotter;
 import com.sun.jna.Pointer;
 import org.jire.grapple.AbstractSource;
 import org.jire.grapple.Source;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -41,11 +43,14 @@ public abstract class AbstractSnapshotter extends AbstractSource implements Snap
 	};
 	
 	private final Source source;
+	private final SnapshotListener snapshotListener;
 	
-	public AbstractSnapshotter(Source source) {
-		super(source.getSize(), source.getBase());
+	public AbstractSnapshotter(MemoryCache memoryCache, PointerCache pointerCache,
+	                           Source source, SnapshotListener snapshotListener) {
+		super(memoryCache, pointerCache, source.getSize(), source.getBase());
 		
 		this.source = source;
+		this.snapshotListener = snapshotListener;
 	}
 	
 	@Override
@@ -102,6 +107,11 @@ public abstract class AbstractSnapshotter extends AbstractSource implements Snap
 	@Override
 	public Source getSource() {
 		return source;
+	}
+	
+	@Override
+	public void afterSnapshot() {
+		snapshotListener.onSnapshot(this);
 	}
 	
 }

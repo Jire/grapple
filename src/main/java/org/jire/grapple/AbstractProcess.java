@@ -18,6 +18,9 @@
 
 package org.jire.grapple;
 
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +28,12 @@ public abstract class AbstractProcess extends AbstractSource implements Process 
 	
 	protected final Map<String, Module> modules = new HashMap<String, Module>();
 	
-	public AbstractProcess(long size, long base) {
-		super(size, base);
+	public AbstractProcess(MemoryCache memoryCache, PointerCache pointerCache, long size, long base) {
+		super(memoryCache, pointerCache, size, base);
 	}
 	
-	public AbstractProcess(long size) {
-		this(size, DEFAULT_BASE);
+	public AbstractProcess(MemoryCache memoryCache, PointerCache pointerCache, long size) {
+		this(memoryCache, pointerCache, size, DEFAULT_BASE);
 	}
 	
 	@Override

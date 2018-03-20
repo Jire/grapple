@@ -16,19 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-group 'org.jire.grapple'
-version '0.1.1'
+package org.jire.grapple.memory;
 
-apply plugin: 'java'
+import com.sun.jna.Memory;
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-	compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
+final class BinarySizeArrayMemoryCache extends AbstractMemoryCache {
+	
+	private final int maxSupportedSize;
+	private final Memory[] MEMORY_INDEXED_BY_SIZE;
+	
+	BinarySizeArrayMemoryCache(int maxSupportedSize) {
+		this.maxSupportedSize = maxSupportedSize;
+		
+		MEMORY_INDEXED_BY_SIZE = new Memory[maxSupportedSize / 2];
+		for (int i = 0; i < MEMORY_INDEXED_BY_SIZE.length; i++) {
+			MEMORY_INDEXED_BY_SIZE[i] = new Memory((i + 1) * 2);
+		}
+	}
+	
+	@Override
+	public boolean isSupportedSize(int size) {
+		return size <= maxSupportedSize && size % 2 == 0;
+	}
+	
+	@Override
+	public Memory forSize(int size) {
+		final Memory memory = MEMORY_INDEXED_BY_SIZE[size / 2];
+		memory.clear(size);
+		return memory;
+	}
+	
 }

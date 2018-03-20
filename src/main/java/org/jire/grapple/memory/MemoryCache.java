@@ -26,4 +26,8 @@ public interface MemoryCache {
 	
 	Memory forSize(int size);
 	
+	Memory forSizeOrNull(int size);
+	
+	Memory forSizeOrNew(int size);
+	
 }

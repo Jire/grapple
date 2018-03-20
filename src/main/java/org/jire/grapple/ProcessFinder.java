@@ -22,6 +22,10 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinNT;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.memory.MemoryCaches;
+import org.jire.grapple.pointers.PointerCache;
+import org.jire.grapple.pointers.PointerCaches;
 import org.jire.grapple.windows.DWORDConstants;
 import org.jire.grapple.windows.WindowsProcess;
 
@@ -32,15 +36,17 @@ public final class ProcessFinder {
 	
 	// TODO support other OS
 	
-	public static Process findProcessByID(int processID, int accessFlags) {
+	public static Process findProcessByID(int processID, int accessFlags,
+	                                      MemoryCache memoryCache, PointerCache pointerCache) {
 		final WinNT.HANDLE handle = Kernel32.INSTANCE.OpenProcess(accessFlags, true, processID);
 		if (handle != null) {
-			return new WindowsProcess(0L/*XXX*/, handle);
+			return new WindowsProcess(memoryCache, pointerCache, 0L/*XXX*/, handle);
 		}
 		return null;
 	}
 	
-	public static List<Process> findProcessesByName(String name, int accessFlags) {
+	public static List<Process> findProcessesByName(String name, int accessFlags,
+	                                                MemoryCache memoryCache, PointerCache pointerCache) {
 		final List<Process> processes = new ArrayList<Process>();
 		
 		final WinNT.HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(
@@ -50,7 +56,8 @@ public final class ProcessFinder {
 			while (Kernel32.INSTANCE.Process32Next(snapshot, entry)) {
 				final String fileName = Native.toString(entry.szExeFile);
 				if (name.equals(fileName)) {
-					final Process processByID = findProcessByID(entry.th32ProcessID.intValue(), accessFlags);
+					final Process processByID
+							= findProcessByID(entry.th32ProcessID.intValue(), accessFlags, memoryCache, pointerCache);
 					if (processByID != null) processes.add(processByID);
 				}
 			}
@@ -59,6 +66,12 @@ public final class ProcessFinder {
 		}
 		
 		return processes;
+	}
+	
+	public static List<Process> findProcessesByName(String name, int accessFlags) {
+		return findProcessesByName(name, accessFlags,
+				MemoryCaches.singleMemoryCache(8),
+				PointerCaches.singlePointerCache());
 	}
 	
 	public static List<Process> findProcessesByTitle(String title, int accessFlags) {

@@ -16,19 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-group 'org.jire.grapple'
-version '0.1.1'
+package org.jire.grapple.snapshotter;
 
-apply plugin: 'java'
+import com.sun.jna.Memory;
+import org.jire.grapple.Source;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-	compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
+final class MemorySnapshotter extends AbstractSnapshotter {
+	
+	private final Memory memory;
+	
+	MemorySnapshotter(MemoryCache memoryCache, PointerCache pointerCache,
+	                  Source source, SnapshotListener snapshotListener) {
+		super(memoryCache, pointerCache, source, snapshotListener);
+		
+		this.memory = new Memory(getSize());
+	}
+	
+	public Memory getMemory() {
+		return memory;
+	}
+	
+	@Override
+	public void takeSnapshot() {
+		if (getSource().read(0L, memory, (int) getSize() /* supports 32-bit process size only */)) {
+			afterSnapshot();
+		}
+	}
+	
 }

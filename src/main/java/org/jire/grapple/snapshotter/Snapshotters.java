@@ -16,34 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.jire.grapple.memory;
+package org.jire.grapple.snapshotter;
 
-import com.sun.jna.Memory;
 import org.jire.grapple.Source;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.memory.MemoryCaches;
+import org.jire.grapple.pointers.PointerCache;
+import org.jire.grapple.pointers.PointerCaches;
 
-public final class MemoryCaches {
+public final class Snapshotters {
 	
-	public static MemoryCache defaultMemoryCache() {
-		return singleMemoryCache(8);
+	public static Snapshotter snapshotter(Source source, SnapshotListener snapshotListener) {
+		return memorySnapshotter(source, snapshotListener,
+				MemoryCaches.defaultMemoryCache(),
+				PointerCaches.defaultPointerCache());
 	}
 	
-	public static MemoryCache singleMemoryCache(int maxSupportedSize) {
-		return new SingleMemoryCache(maxSupportedSize);
+	public static Snapshotter memorySnapshotter(Source source, SnapshotListener snapshotListener,
+	                                            MemoryCache memoryCache, PointerCache pointerCache) {
+		return new MemorySnapshotter(memoryCache, pointerCache, source, snapshotListener);
 	}
 	
-	public static MemoryCache arrayMemoryCache(int maxSupportedSize) {
-		return new BinarySizeArrayMemoryCache(maxSupportedSize);
-	}
-	
-	public static Memory readSourceUsingCache(Source source, MemoryCache cache, long address, int bytesToRead) {
-		final Memory memory = cache.forSize(bytesToRead);
-		if (memory != null) {
-			source.read(address, memory, bytesToRead);
-		}
-		return memory;
-	}
-	
-	private MemoryCaches() {
+	private Snapshotters() {
 		throw new UnsupportedOperationException();
 	}
 	

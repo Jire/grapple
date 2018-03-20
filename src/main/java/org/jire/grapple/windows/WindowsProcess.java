@@ -24,6 +24,8 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import org.jire.grapple.AbstractProcess;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
 
 import static org.jire.grapple.windows.OptimizedKernel32.ReadProcessMemory;
 
@@ -31,8 +33,8 @@ public class WindowsProcess extends AbstractProcess {
 	
 	private final WinNT.HANDLE handle;
 	
-	public WindowsProcess(long size, WinNT.HANDLE handle) {
-		super(size);
+	public WindowsProcess(MemoryCache memoryCache, PointerCache pointerCache, long size, WinNT.HANDLE handle) {
+		super(memoryCache, pointerCache, size);
 		this.handle = handle;
 	}
 	
@@ -59,7 +61,8 @@ public class WindowsProcess extends AbstractProcess {
 					final long base = Pointer.nativeValue(hModule.getPointer());
 					final String name = WindowsModule.getModuleName(handle, hModule);
 					
-					final WindowsModule module = new WindowsModule(size, base, this, name, hModule);
+					final WindowsModule module = new WindowsModule(
+							getMemoryCache(), getPointerCache(), size, base, this, name, hModule);
 					WindowsProcess.this.modules.put(name, module);
 				}
 			}

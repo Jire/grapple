@@ -16,19 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-group 'org.jire.grapple'
-version '0.1.1'
+package org.jire.grapple.pointers;
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-	compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
+public final class Pointers {
+	
+	public static final long NULL = 0L;
+	
+	private Pointers() {
+		throw new UnsupportedOperationException();
+	}
+	
 }

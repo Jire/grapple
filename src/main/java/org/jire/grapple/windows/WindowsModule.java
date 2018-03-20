@@ -22,13 +22,16 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import org.jire.grapple.AbstractModule;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
 
 public class WindowsModule extends AbstractModule<WindowsProcess> {
 	
 	private final WinDef.HMODULE hModule;
 	
-	public WindowsModule(long size, long base, WindowsProcess process, String name, WinDef.HMODULE hModule) {
-		super(size, base, process, name);
+	public WindowsModule(MemoryCache memoryCache, PointerCache pointerCache, long size, long base,
+	                     WindowsProcess process, String name, WinDef.HMODULE hModule) {
+		super(memoryCache, pointerCache, size, base, process, name);
 		this.hModule = hModule;
 	}
 	

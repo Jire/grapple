@@ -20,26 +20,23 @@ package org.jire.grapple.memory;
 
 import com.sun.jna.Memory;
 
-final class NonThreadSafe implements MemoryCache {
+final class SingleMemoryCache extends AbstractMemoryCache {
 	
-	// reason we index by size is because it's far faster than a map-lookup!
+	private final int maxSupportedSize;
+	private final Memory memory;
 	
-	private final Memory[] MEMORY_INDEXED_BY_SIZE = new Memory[8 + 1]; // support up to size of long (8 bytes)
-	
-	NonThreadSafe() {
-		for (int i = 2; i <= 8; i += 2) {
-			MEMORY_INDEXED_BY_SIZE[i] = new Memory(i);
-		}
+	SingleMemoryCache(int maxSupportedSize) {
+		this.maxSupportedSize = maxSupportedSize;
+		this.memory = new Memory(maxSupportedSize);
 	}
 	
 	@Override
 	public boolean isSupportedSize(int size) {
-		return size <= 8 && size % 2 == 0;
+		return size <= maxSupportedSize;
 	}
 	
 	@Override
 	public Memory forSize(int size) {
-		final Memory memory = MEMORY_INDEXED_BY_SIZE[size];
 		memory.clear(size);
 		return memory;
 	}

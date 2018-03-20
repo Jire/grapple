@@ -16,19 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-group 'org.jire.grapple'
-version '0.1.1'
+package org.jire.grapple.pointers;
 
-apply plugin: 'java'
+import com.sun.jna.Pointer;
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-	compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
+final class ThreadLocalSinglePointerCache extends AbstractPointerCache {
+	
+	private final ThreadLocal<Pointer> pointer = new ThreadLocal<Pointer>() {
+		@Override
+		protected Pointer initialValue() {
+			return Pointer.createConstant(Pointers.NULL);
+		}
+	};
+	
+	@Override
+	public Pointer forPeer(long peer) {
+		final Pointer threadLocalPointer = pointer.get();
+		Pointer.nativeValue(threadLocalPointer, peer);
+		return threadLocalPointer;
+	}
+	
 }
