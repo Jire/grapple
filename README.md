@@ -7,23 +7,17 @@ _Easy interaction with native processes, all from Java_
 
 ---
 
-The easiest way to get started is by using a snapshotter.
+Example usage:
 
 ```java
-Process process = ProcessFinder.findProcessesByName("chrome.exe").get(0);
-new JNASnapshotter(process) {
-	@Override
-	public void afterSnapshot() {
-		System.out.println("Read " + readByte(0x12345));
-	}
-}.autoTakeSnapshots(); // will take snapshots every 16ms, approximately 60 FPS
+Process process = ProcessFinder.findProcessesByName("process.exe").get(0);
+process.readByte(0x12345); // read a byte at address 0x12345
+
+process.loadModules(); // need to load modules before accessing them!
+
+Module module = process.getModules().get("module.dll");
+module.readByte(0x12345); // read a byte at offset 0x12345
 ```
 
-This is the most efficient way to interact with a process, and makes things easy for you.
-If you need to support a faster snapshot rate, you can specify it as an argument of `autoTakeSnapshots`.
-
-You can also directly read from a `Process`, and it's plenty of efficient and great for non-real-time applications.
-
-```java
-process.readByte(0x12345);
-```
+**Please note:** this project is not yet complete, and all API and feature designs 
+are subject to change at any time.
