@@ -36,6 +36,16 @@ public abstract class AbstractModule<PROCESS_TYPE extends Process>
 	}
 	
 	@Override
+	public long getChildBase() {
+		return super.getBase();
+	}
+	
+	@Override
+	public long getBase() {
+		return process.getBase() + getChildBase();
+	}
+	
+	@Override
 	public PROCESS_TYPE getProcess() {
 		return process;
 	}
@@ -47,13 +57,12 @@ public abstract class AbstractModule<PROCESS_TYPE extends Process>
 	
 	@Override
 	public boolean read(Pointer address, Pointer data, int bytesToRead) {
-		Pointer.nativeValue(address, getBase() + Pointer.nativeValue(address)); // set the pointer to the modified address
-		return getProcess().read(address, data, bytesToRead); // then do the read via process
+		return process.read(address, data, bytesToRead);
 	}
 	
 	@Override
 	public boolean read(long address, Pointer data, int bytesToRead) {
-		return getProcess().read(getBase() + address, data, bytesToRead);
+		return process.read(address, data, bytesToRead);
 	}
 	
 }

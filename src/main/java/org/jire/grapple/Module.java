@@ -24,4 +24,6 @@ public interface Module<PROCESS_TYPE extends Process> extends Source {
 	
 	String getName();
 	
+	long getChildBase();
+	
 }
