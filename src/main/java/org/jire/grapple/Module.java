@@ -18,9 +18,7 @@
 
 package org.jire.grapple;
 
-public interface Module<PROCESS_TYPE extends Process> extends Source {
-	
-	PROCESS_TYPE getProcess();
+public interface Module extends Source {
 	
 	String getName();
 	

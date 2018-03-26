@@ -18,23 +18,41 @@
 
 package org.jire.grapple;
 
+import com.sun.jna.Pointer;
 import org.jire.grapple.memory.MemoryCache;
 import org.jire.grapple.pointers.PointerCache;
 
-public abstract class AbstractModule<PARENT_TYPE extends Process>
-		extends AbstractBackedSource<PARENT_TYPE> implements Module {
+public abstract class AbstractBackedSource<PARENT_TYPE extends Source> extends AbstractSource {
 	
-	private final String name;
+	private final PARENT_TYPE parent;
 	
-	public AbstractModule(MemoryCache memoryCache, PointerCache pointerCache,
-	                      long size, long base, PARENT_TYPE process, String name) {
-		super(memoryCache, pointerCache, size, base, process);
-		this.name = name;
+	public AbstractBackedSource(MemoryCache memoryCache, PointerCache pointerCache,
+	                            long size, long base, PARENT_TYPE parent) {
+		super(memoryCache, pointerCache, size, base);
+		this.parent = parent;
+	}
+	
+	public PARENT_TYPE getParent() {
+		return parent;
 	}
 	
 	@Override
-	public String getName() {
-		return name;
+	public long getBase() {
+		return parent.getBase() + getChildBase();
+	}
+	
+	@Override
+	public boolean read(Pointer address, Pointer data, int bytesToRead) {
+		return parent.read(address, data, bytesToRead);
+	}
+	
+	@Override
+	public boolean read(long address, Pointer data, int bytesToRead) {
+		return parent.read(address, data, bytesToRead);
+	}
+	
+	public long getChildBase() {
+		return super.getBase();
 	}
 	
 }
