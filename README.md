@@ -10,7 +10,7 @@ _Easy interaction with native processes, all from Java_
 Example usage:
 
 ```java
-Process process = ProcessFinder.findProcessesByName("process.exe").get(0);
+Process process = Grapple.processFinder().findFirstProcessByName("process.exe");
 process.readByte(0x12345); // read a byte at address 0x12345
 
 process.loadModules(); // need to load modules before accessing them!
