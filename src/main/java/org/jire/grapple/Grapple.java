@@ -18,22 +18,16 @@
 
 package org.jire.grapple;
 
-import java.util.List;
+import org.jire.grapple.windows.WindowsProcessFinder;
 
-public interface ProcessFinder {
+public final class Grapple {
 	
-	int defaultAccessFlags();
+	public static ProcessFinder processFinder() {
+		return new WindowsProcessFinder(); // TODO support other OS
+	}
 	
-	Process findProcessByID(int processID, int accessFlags);
-	
-	Process findProcessByID(int processID);
-	
-	List<Process> findProcessesByName(String processName, int accessFlags);
-	
-	List<Process> findProcessesByName(String processName);
-	
-	Process findFirstProcessByName(String processName, int accessFlags);
-	
-	Process findFirstProcessByName(String processName);
+	private Grapple() {
+		throw new UnsupportedOperationException();
+	}
 	
 }

@@ -20,20 +20,27 @@ package org.jire.grapple;
 
 import java.util.List;
 
-public interface ProcessFinder {
+public abstract class AbstractProcessFinder implements ProcessFinder {
 	
-	int defaultAccessFlags();
+	@Override
+	public Process findProcessByID(int processID) {
+		return findProcessByID(processID, defaultAccessFlags());
+	}
 	
-	Process findProcessByID(int processID, int accessFlags);
+	@Override
+	public List<Process> findProcessesByName(String processName) {
+		return findProcessesByName(processName, defaultAccessFlags());
+	}
 	
-	Process findProcessByID(int processID);
+	@Override
+	public Process findFirstProcessByName(String processName, int accessFlags) {
+		final List<Process> processesByName = findProcessesByName(processName, accessFlags);
+		return processesByName == null ? null : processesByName.get(0);
+	}
 	
-	List<Process> findProcessesByName(String processName, int accessFlags);
-	
-	List<Process> findProcessesByName(String processName);
-	
-	Process findFirstProcessByName(String processName, int accessFlags);
-	
-	Process findFirstProcessByName(String processName);
+	@Override
+	public Process findFirstProcessByName(String processName) {
+		return findFirstProcessByName(processName, defaultAccessFlags());
+	}
 	
 }
