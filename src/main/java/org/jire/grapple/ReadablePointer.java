@@ -18,44 +18,13 @@
 
 package org.jire.grapple;
 
-import com.sun.jna.Pointer;
+import org.jire.grapple.memory.MemoryCache;
+import org.jire.grapple.pointers.PointerCache;
 
-public interface Readable {
+public class ReadablePointer extends AbstractBackedSource<Source> {
 	
-	byte readByte(long offset);
-	
-	byte readByte();
-	
-	short readShort(long offset);
-	
-	short readShort();
-	
-	int readInt(long offset);
-	
-	int readInt();
-	
-	long readLong(long offset);
-	
-	long readLong();
-	
-	float readFloat(long offset);
-	
-	float readFloat();
-	
-	double readDouble(long offset);
-	
-	double readDouble();
-	
-	char readChar(long offset);
-	
-	char readChar();
-	
-	boolean readBoolean(long offset);
-	
-	boolean readBoolean();
-	
-	ReadablePointer readablePointer(Pointer address);
-	
-	ReadablePointer readablePointer(long address);
+	public ReadablePointer(MemoryCache memoryCache, PointerCache pointerCache, long size, long base, Source parent) {
+		super(memoryCache, pointerCache, size, base, parent);
+	}
 	
 }

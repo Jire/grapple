@@ -18,7 +18,9 @@
 
 package org.jire.grapple.snapshotter;
 
+import com.sun.jna.Pointer;
 import org.jire.grapple.BackedSource;
+import org.jire.grapple.ReadablePointer;
 import org.jire.grapple.Source;
 
 import java.util.concurrent.ThreadFactory;
@@ -60,6 +62,16 @@ public class Snapshot extends BackedSource implements Snapshotter {
 	@Override
 	public void afterSnapshot() {
 		snapshotter.afterSnapshot();
+	}
+	
+	@Override
+	public ReadablePointer readablePointer(Pointer address) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public ReadablePointer readablePointer(long address) {
+		throw new UnsupportedOperationException();
 	}
 	
 }

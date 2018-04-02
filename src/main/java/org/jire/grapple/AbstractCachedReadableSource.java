@@ -91,4 +91,17 @@ public abstract class AbstractCachedReadableSource extends AbstractReadable impl
 		return readByte(offset) != 0;
 	}
 	
+	@Override
+	public ReadablePointer readablePointer(Pointer address) {
+		return readablePointer(Pointer.nativeValue(address));
+	}
+	
+	@Override
+	public ReadablePointer readablePointer(long address) {
+		final int resolvedPointerAddress = readInt(address);
+		return resolvedPointerAddress <= 0 ? null
+				: new ReadablePointer(getMemoryCache(), getPointerCache(),
+				0, resolvedPointerAddress, this);
+	}
+	
 }
